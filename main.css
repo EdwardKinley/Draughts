@@ -10,7 +10,7 @@ body {
   align-items: center;
   height: 98vh;
   width: 99vw;
-  background-color: black;
+  /* background-color: black; */
   color: red;
   font-family: sans-serif;
 }
@@ -19,9 +19,9 @@ body {
   height: 92vh;
   width: 92vh;
   min-width: 92vh;
-  background-color: red;
   /* margin: 5vh 10vw; */
   padding: 3vh;
+  /* background-color: grey; */
 }
 
 .scores {
@@ -40,4 +40,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.man {
+  height: 90%;
+  width: 90%;
+  border: 0;
+  border-radius: 50%;
+  /* background-color: purple; */
 }

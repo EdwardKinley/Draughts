@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   boardDiv = document.querySelector('.board');
   n = 8;
+  lightColour = 'white';
+  darkColour = 'black';
 
   addBoard();
 
@@ -29,12 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
     space.id = `space${i}${j}`;
     space.style.width = `${100/n}%`;
     row.appendChild(space);
-    space.textContent = `${i}${j}`;
     if ((i+j)%2 == 0) {
-      space.style.backgroundColor = 'white';
+      space.style.backgroundColor = 'yellow';
     } else {
-      space.style.backgroundColor = 'black';
+      space.style.backgroundColor = 'sienna';
+      if (space.id[5] < n/2 - 1) {
+        addMan(space, lightColour);
+      } else if (space.id[5] > n/2) {
+        addMan(space, darkColour);
+      }
     }
+  }
+
+  function addMan(space, colour) {
+    const man = document.createElement('div');
+    man.className = 'man';
+    man.id = `man${space.id.slice(5)}`;
+    space.appendChild(man);
+    man.style.backgroundColor = colour;
   }
 
 })
