@@ -11,17 +11,33 @@ body {
   height: 98vh;
   width: 99vw;
   background-color: black;
-  color: white;
+  color: red;
   font-family: sans-serif;
 }
 
 .board {
-  height: 98vh;
-  width: 98vh;
+  height: 92vh;
+  width: 92vh;
+  min-width: 92vh;
   background-color: red;
+  /* margin: 5vh 10vw; */
+  padding: 3vh;
 }
 
 .scores {
   height: 98vh;
   background-color: green;
+}
+
+.row {
+  background-color: yellow;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.space {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
