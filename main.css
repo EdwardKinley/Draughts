@@ -45,7 +45,28 @@ body {
 .man {
   height: 90%;
   width: 90%;
-  border: 0;
+  /* border-bottom: 3px solid grey; */
+  /* border-right: 3px solid grey; */
   border-radius: 50%;
   /* background-color: purple; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ring {
+  height: 80%;
+  width: 80%;
+  border-radius: 50%;
+  /* background-color: white; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.king {
+  height: 80%;
+  width: 80%;
+  border-radius: 50%;
+  /* background-color: black; */
 }
