@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   player1 = { name: 'Player 1', colour: darkColour };
   player2 = { name: 'Player 2', colour: lightColour };
-  // players = [player1, player2];
-  players = [player2, player1];
+  players = [player1, player2];
+  // players = [player2, player1];
 
   addBoard();
 
@@ -19,13 +19,13 @@ document.addEventListener('DOMContentLoaded', () => {
   makeKing(document.querySelector('#man25'));
 
   const currentPlayerPieces = identifyCurrentPlayerPieces();
-  const piecesThatCanCapture = identifyPiecesThatCanCapture();
+  piecesThatCanCapture = identifyPiecesThatCanCapture();
   // const movablePieces = identifyMovablePieces(currentPlayerPieces);
   // identifyPiecesThatCanBeCapturedBy(document.querySelector('#man12'));
   identifyPiecesThatCanBeCapturedBy(document.querySelector('#man54'));
   identifyPiecesThatCanBeCapturedBy(document.querySelector('#man25'));
 
-  getReadyToMove(piecesThatCanCapture);
+  getReadyToSelect(piecesThatCanCapture);
 
   function addBoard() {
     for (i=0; i<n; i++) {
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     row.className = 'row';
     row.id = `row${i}`;
     row.style.height = `${100/n}%`;
+    row.style.height = `${92/n}vh`;
     boardDiv.appendChild(row);
     for (j=0; j<n; j++) {
       addSpace(row, i, j);
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     space.className = 'space';
     space.id = `space${i}${j}`;
     space.style.width = `${100/n}%`;
+    space.style.width = `${92/n}vh`;
     row.appendChild(space);
     if ((i+j)%2 == 0) {
       space.style.backgroundColor = 'tan';
@@ -147,12 +149,50 @@ document.addEventListener('DOMContentLoaded', () => {
     if (relation == 'downright') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])+1}`); }
   }
 
-  function getReadyToMove(pieces) {
-    console.log(pieces);
+  function getReadyToSelect(pieces) {
+    // console.log(pieces);
     for (i=0; i<pieces.length; i++) {
-      console.log(identifyPiecesThatCanBeCapturedBy(pieces[i]));
+      const potentialCaptees = identifyPiecesThatCanBeCapturedBy(pieces[i]);
+      // pieces[i].parentNode.style.backgroundColor = 'grey';
+      pieces[i].addEventListener('click', makeSelected);
+      for (j=0; j<potentialCaptees.length; j++) {
+      }
     }
   }
+
+  function makeSelected() {
+
+    if (this.parentNode.classList.contains('selected')) {
+      this.parentNode.classList.remove('selected');
+      removeBorder(this.parentNode);
+    } else if (document.getElementsByClassName('selected').length > 0) {
+      removeBorder(document.querySelector('.selected'));
+      document.querySelector('.selected').classList.remove('selected');
+      this.parentNode.classList.add('selected');
+      addBorder(this.parentNode);
+    } else {
+      this.parentNode.classList.add('selected');
+      addBorder(this.parentNode);
+    }
+    for (i=0; i<piecesThatCanCapture.length; i++) {
+      // piecesThatCanCapture[i].removeEventListener('click', makeSelected);
+    }
+  }
+
+  function addBorder(element) {
+    console.log(element);
+    element.style.border = `${4.6/n}vh solid gold`;
+    element.firstChild.style.height = '100%';
+    element.firstChild.style.width = '100%';
+  }
+
+  function removeBorder(element) {
+    console.log(element);
+    element.style.border = 0;
+    element.firstChild.style.height = '90%';
+    element.firstChild.style.width = '90%';
+  }
+
 
   // function identifyMovablePieces(currentPlayerPieces) {
   //   const tempMovablePieces = [];
