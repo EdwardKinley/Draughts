@@ -12,14 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   addBoard();
 
-  addMan(document.querySelector('#space41'), lightColour);
-  addMan(document.querySelector('#space43'), lightColour);
-  addMan(document.querySelector('#space36'), darkColour);
-  makeKing(document.querySelector('#man52'));
-  makeKing(document.querySelector('#man25'));
-  removeMan(document.querySelector('#man16'))
-  addMan(document.querySelector('#space16'), darkColour);
-  makeKing(document.querySelector('#man16'));
+  // addMan(document.querySelector('#space41'), lightColour);
+  // addMan(document.querySelector('#space43'), lightColour);
+  // addMan(document.querySelector('#space36'), darkColour);
+  // makeKing(document.querySelector('#man52'));
+  // makeKing(document.querySelector('#man25'));
+  // removeMan(document.querySelector('#man16'))
+  // addMan(document.querySelector('#space16'), darkColour);
+  // makeKing(document.querySelector('#man16'));
 
   currentPlayerPieces = identifyCurrentPlayerPieces();
   piecesThatCanCapture = identifyPiecesThatCanCapture();
@@ -268,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function enableNonCapturingMove() {
     console.log('non capture!');
     piecesThatCanMove = identifyPiecesThatCanMove();
-    console.log(piecesThatCanMove);
     for (i=0; i<piecesThatCanMove.length; i++) {
       piecesThatCanMove[i].addEventListener('click', selectMover);
     }
@@ -290,12 +289,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (piece.childNodes.length == 1 || players[0] == player1) {
       if ((piece.id[3] > 0) && (piece.id[4] > 0)) {
         if (spaceRelation('upleft', piece).firstChild == null) {
-          tempPotentialSpaces.push(spaceRelation('upleft', piece).firstChild);
+          tempPotentialSpaces.push(spaceRelation('upleft', piece));
         }
       }
       if ((piece.id[3] > 0) && (piece.id[4] < n-1)) {
         if (spaceRelation('upright', piece).firstChild == null) {
-          tempPotentialSpaces.push(spaceRelation('upright', piece).firstChild);
+          tempPotentialSpaces.push(spaceRelation('upright', piece));
         }
       }
     }
@@ -303,12 +302,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (piece.childNodes.length == 1 || players[0] == player2) {
       if ((piece.id[3] < n-1) && (piece.id[4] > 0)) {
         if (spaceRelation('downleft', piece).firstChild == null) {
-          tempPotentialSpaces.push(spaceRelation('downleft', piece).firstChild);
+          tempPotentialSpaces.push(spaceRelation('downleft', piece));
         }
       }
       if ((piece.id[3] < n-1) && (piece.id[4] < n-1)) {
         if (spaceRelation('downright', piece).firstChild == null) {
-          tempPotentialSpaces.push(spaceRelation('downright', piece).firstChild);
+          tempPotentialSpaces.push(spaceRelation('downright', piece));
         }
       }
     }
@@ -339,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function makeMoveToable() {
+    console.log(spacesThatCanBeMovedTo);
     for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
       spacesThatCanBeMovedTo[i].addEventListener('click', movePiece);
     }
