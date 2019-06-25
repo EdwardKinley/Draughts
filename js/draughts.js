@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   player1 = { name: 'Player 1', colour: darkColour };
   player2 = { name: 'Player 2', colour: lightColour };
-  players = [player1, player2];
-  // players = [player2, player1];
+  // players = [player1, player2];
+  players = [player2, player1];
 
   addBoard();
 
@@ -18,14 +18,16 @@ document.addEventListener('DOMContentLoaded', () => {
   makeKing(document.querySelector('#man52'));
   makeKing(document.querySelector('#man25'));
 
-  const currentPlayerPieces = identifyCurrentPlayerPieces();
+  currentPlayerPieces = identifyCurrentPlayerPieces();
   piecesThatCanCapture = identifyPiecesThatCanCapture();
+  piecesThatCanBeCaptured = [];
+  captor = null;
   // const movablePieces = identifyMovablePieces(currentPlayerPieces);
   // identifyPiecesThatCanBeCapturedBy(document.querySelector('#man12'));
-  identifyPiecesThatCanBeCapturedBy(document.querySelector('#man54'));
-  identifyPiecesThatCanBeCapturedBy(document.querySelector('#man25'));
+  // identifyPiecesThatCanBeCapturedBy(document.querySelector('#man54'));
+  // identifyPiecesThatCanBeCapturedBy(document.querySelector('#man25'));
 
-  getReadyToSelect(piecesThatCanCapture);
+  getReadyToSelect();
 
   function addBoard() {
     for (i=0; i<n; i++) {
@@ -149,78 +151,123 @@ document.addEventListener('DOMContentLoaded', () => {
     if (relation == 'downright') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])+1}`); }
   }
 
-  function getReadyToSelect(pieces) {
-    // console.log(pieces);
-    for (i=0; i<pieces.length; i++) {
-      const potentialCaptees = identifyPiecesThatCanBeCapturedBy(pieces[i]);
-      // pieces[i].parentNode.style.backgroundColor = 'grey';
-      pieces[i].addEventListener('click', makeSelected);
-      for (j=0; j<potentialCaptees.length; j++) {
-      }
+  function getReadyToSelect() {
+    for (i=0; i<piecesThatCanCapture.length; i++) {
+      piecesThatCanCapture[i].addEventListener('click', makeSelected);
     }
   }
 
   function makeSelected() {
 
-    if (this.parentNode.classList.contains('selected')) {
-      this.parentNode.classList.remove('selected');
-      removeBorder(this.parentNode);
-    } else if (document.getElementsByClassName('selected').length > 0) {
-      removeBorder(document.querySelector('.selected'));
-      document.querySelector('.selected').classList.remove('selected');
-      this.parentNode.classList.add('selected');
-      addBorder(this.parentNode);
-    } else {
-      this.parentNode.classList.add('selected');
-      addBorder(this.parentNode);
+    // for (i=0; i<piecesThatCanCapture; i++) {
+    //   piecesThatCanCapture[i].removeEventListener('click', makeSelected);
+    // }
+    // piecesThatCanCapture = [];
+    if (captor != null && captor != this) {
+      makeUnselected();
     }
-    for (i=0; i<piecesThatCanCapture.length; i++) {
-      // piecesThatCanCapture[i].removeEventListener('click', makeSelected);
+    captor = this;
+    captor.addEventListener('click', makeUnselected);
+    piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
+    addBorder(captor.parentNode);
+
+    makeCapturable();
+
+    // if (this.parentNode.classList.contains('selected')) {
+    //   this.parentNode.classList.remove('selected');
+    //   removeBorder(this.parentNode);
+    //   // piecesThatCanBeCaptured = [];
+    //   makeUncapturable();
+    // } else if (document.getElementsByClassName('selected').length > 0) {
+    //   removeBorder(document.querySelector('.selected'));
+    //   document.querySelector('.selected').classList.remove('selected');
+    //   this.parentNode.classList.add('selected');
+    //   addBorder(this.parentNode);
+    //   piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
+    //   makeCapturable();
+    // } else {
+    //   this.parentNode.classList.add('selected');
+    //   addBorder(this.parentNode);
+    //   piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
+    //   makeCapturable();
+    // }
+    // const placesCurrentlySelectedPieceCouldMoveTo = placesPieceCouldMoveToAfterCapture(piece);
+
+    // for (i=0; i<piecesThatCanCapture.length; i++) {
+    //   // piecesThatCanCapture[i].removeEventListener('click', makeSelected);
+    // }
+  }
+
+  function makeUnselected() {
+    captor.removeEventListener('click', makeUnselected);
+    console.log(captor.parentNode);
+    removeBorder(captor.parentNode);
+    captor.addEventListener('click', makeSelected);
+    for (i=0; i<piecesThatCanBeCaptured.length; i++) {
+      piecesThatCanBeCaptured[i].removeEventListener('click', makeCapturable);
+    }
+    piecesThatCanBeCaptured = [];
+    captor = null;
+  }
+
+  function makeCapturable() {
+    // piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(potentialCaptor);
+    for (i=0; i<piecesThatCanBeCaptured.length; i++) {
+      // piecesThatCanBeCaptured[i].addEventListener('click', makePieceCapturable);
+      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).addEventListener('click', makePieceCapturable);
     }
   }
 
+  function makeUncapturable() {
+    // const potentialCaptor = document.querySelector('.selected').firstChild;
+    // piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(potentialCaptor);
+    for (i=0; i<piecesThatCanBeCaptured.length; i++) {
+      // piecesThatCanBeCaptured[i].removeEventListener('click', makePieceCapturable);
+      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', makePieceCapturable);
+    }
+    piecesThatCanBeCaptured = [];
+  }
+
+  function makePieceCapturable() {
+    const colour = captor.style.backgroundColor;
+    const spaceToWhichCaptorMoves = this;
+    addMan(spaceToWhichCaptorMoves, colour);
+    removeMan(spaceRelation(relationDirection(captor, spaceToWhichCaptorMoves.firstChild), captor).firstChild);
+    removeBorder(captor.parentNode);
+    removeMan(captor);
+    // this.style.backgroundColor = 'pink'
+  }
+
+  function relationDirection(from, to) {
+    if ((parseInt(to.id[3]) < parseInt(from.id[3])) && (parseInt(to.id[4]) < parseInt(from.id[4]))) { console.log('upleft'); return 'upleft'; }
+    if ((parseInt(to.id[3]) < parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { console.log('upright'); return 'upright'; }
+    if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) < parseInt(from.id[4]))) { console.log('downleft'); return 'downleft'; }
+    if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { console.log('downright'); return 'downright'; }
+    // if (relation == 'upleft') { return document.querySelector(`#space${parseInt(piece.id[3])-1}${parseInt(piece.id[4])-1}`); }
+    // if (relation == 'upright') { return document.querySelector(`#space${parseInt(piece.id[3])-1}${parseInt(piece.id[4])+1}`); }
+    // if (relation == 'downleft') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])-1}`); }
+    // if (relation == 'downright') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])+1}`); }
+  }
+
+
   function addBorder(element) {
-    console.log(element);
     element.style.border = `${4.6/n}vh solid gold`;
     element.firstChild.style.height = '100%';
     element.firstChild.style.width = '100%';
   }
 
   function removeBorder(element) {
-    console.log(element);
     element.style.border = 0;
     element.firstChild.style.height = '90%';
     element.firstChild.style.width = '90%';
   }
 
+  function placesPieceCouldMoveToAfterCapture(piece) {
+    // console.log(piece);
+  }
 
-  // function identifyMovablePieces(currentPlayerPieces) {
-  //   const tempMovablePieces = [];
-  //   for (i=0; i<currentPlayerPieces.length; i++) {
-  //     // console.log(document.querySelector(`#space${parseInt(currentPlayerPieces[i].id[3])-1}${parseInt(currentPlayerPieces[i].id[4])+1}`));
-  //     if (parseInt(currentPlayerPieces[i].id[3]) - 1 >= 0 && parseInt(currentPlayerPieces[i].id[4]) + 1 < n) {
-  //       // console.log(document.querySelector(`#space${parseInt(currentPlayerPieces[i].id[3])-1}${parseInt(currentPlayerPieces[i].id[4])+1}`));
-  //       if (document.querySelector(`#space${parseInt(currentPlayerPieces[i].id[3])-1}${parseInt(currentPlayerPieces[i].id[4])+1}`).childNodes[0] == null) {
-  //         const currentI = i;
-  //         currentPlayerPieces[i].addEventListener('click', makeMove);
-  //         // () => {
-  //         //   // console.log(currentI);
-  //         //   // console.log(currentPlayerPieces[currentI]);
-  //         //   // moveMan(currentPlayerPieces[currentI].style.backgroundColor, document.querySelector(`#space${parseInt(currentPlayerPieces[currentI].id[3])-1}${parseInt(currentPlayerPieces[currentI].id[4])+1}`));
-  //         //   addMan(document.querySelector(`#space${parseInt(currentPlayerPieces[currentI].id[3])-1}${parseInt(currentPlayerPieces[currentI].id[4])+1}`), currentPlayerPieces[currentI].style.backgroundColor);
-  //         //   removeMan(currentPlayerPieces[currentI]);
-  //         // })
-  //         // console.log(document.querySelector(`#space${parseInt(currentPlayerPieces[i].id[3])-1}${parseInt(currentPlayerPieces[i].id[4])+1}`).id);
-  //       }
-  //       // document.querySelector(`#space${parseInt(currentPlayerPieces[i].id[3])-1}${parseInt(currentPlayerPieces[i].id[4])+1}`).style.backgroundColor = 'red';
-  //     }
-  //     // console.log(document.querySelector(`#${currentPlayerPieces[i].id}`).style.backgroundColor);
-  //     // console.log(`#space${parseInt(currentPlayerPieces[i].id[3])-1}${parseInt(currentPlayerPieces[i].id[4])+1}`);
-  //   }
-  // }
 
   function makeMove() {
-    console.log(this);
     this.removeEventListener('click', makeMove);
     addMan(document.querySelector(`#space${parseInt(this.id[3])-1}${parseInt(this.id[4])+1}`), this.style.backgroundColor);
     removeMan(this);
