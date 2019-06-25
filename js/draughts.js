@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
   addMan(document.querySelector('#space36'), darkColour);
   makeKing(document.querySelector('#man52'));
   makeKing(document.querySelector('#man25'));
+  removeMan(document.querySelector('#man16'))
+  addMan(document.querySelector('#space16'), darkColour);
+  makeKing(document.querySelector('#man16'));
 
   currentPlayerPieces = identifyCurrentPlayerPieces();
   piecesThatCanCapture = identifyPiecesThatCanCapture();
@@ -152,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getReadyToSelect() {
+    console.log(piecesThatCanCapture);
     for (i=0; i<piecesThatCanCapture.length; i++) {
       piecesThatCanCapture[i].addEventListener('click', makeSelected);
     }
@@ -200,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function makeUnselected() {
     captor.removeEventListener('click', makeUnselected);
-    console.log(captor.parentNode);
     removeBorder(captor.parentNode);
     captor.addEventListener('click', makeSelected);
     for (i=0; i<piecesThatCanBeCaptured.length; i++) {
@@ -229,6 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function capturePiece() {
+    this.removeEventListener('click', capturePiece);
     const colour = captor.style.backgroundColor;
     const spaceToWhichCaptorMoves = this;
     addMan(spaceToWhichCaptorMoves, colour);
@@ -240,10 +244,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function relationDirection(from, to) {
-    if ((parseInt(to.id[3]) < parseInt(from.id[3])) && (parseInt(to.id[4]) < parseInt(from.id[4]))) { console.log('upleft'); return 'upleft'; }
-    if ((parseInt(to.id[3]) < parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { console.log('upright'); return 'upright'; }
-    if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) < parseInt(from.id[4]))) { console.log('downleft'); return 'downleft'; }
-    if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { console.log('downright'); return 'downright'; }
+    if ((parseInt(to.id[3]) < parseInt(from.id[3])) && (parseInt(to.id[4]) < parseInt(from.id[4]))) { return 'upleft'; }
+    if ((parseInt(to.id[3]) < parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { return 'upright'; }
+    if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) < parseInt(from.id[4]))) { return 'downleft'; }
+    if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { return 'downright'; }
     // if (relation == 'upleft') { return document.querySelector(`#space${parseInt(piece.id[3])-1}${parseInt(piece.id[4])-1}`); }
     // if (relation == 'upright') { return document.querySelector(`#space${parseInt(piece.id[3])-1}${parseInt(piece.id[4])+1}`); }
     // if (relation == 'downleft') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])-1}`); }
@@ -296,8 +300,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function switchPlayers() {
     players.splice(0, 0, players.pop());
-    console.log(players);
     currentPlayerPieces = identifyCurrentPlayerPieces();
+    for (i=0; i<piecesThatCanCapture.length; i++) {
+      piecesThatCanCapture[i].removeEventListener('click', makeSelected);
+    }
     piecesThatCanCapture = identifyPiecesThatCanCapture();
     piecesThatCanBeCaptured = [];
     captor = null;
