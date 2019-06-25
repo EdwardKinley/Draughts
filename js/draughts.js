@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   captor = null;
 
   piecesThatCanMove = [];
+  spacesThatCanBeMovedTo = [];
+  mover = null;
 
   getReadyToSelect();
 
@@ -185,18 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function makeCapturable() {
-    // piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(potentialCaptor);
     for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-      // piecesThatCanBeCaptured[i].addEventListener('click', capturePiece);
       spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).addEventListener('click', capturePiece);
     }
   }
 
   function makeUncapturable() {
-    // const potentialCaptor = document.querySelector('.selected').firstChild;
-    // piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(potentialCaptor);
     for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-      // piecesThatCanBeCaptured[i].removeEventListener('click', capturePiece);
       spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
     }
     piecesThatCanBeCaptured = [];
@@ -206,7 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
     this.removeEventListener('click', capturePiece);
     const colour = captor.style.backgroundColor;
     const spaceToWhichCaptorMoves = this;
+    const isKing = captor.childNodes.length;
+    console.log(isKing);
     addMan(spaceToWhichCaptorMoves, colour);
+    if (isKing == 1) { makeKing(spaceToWhichCaptorMoves.firstChild); }
     removeMan(spaceRelation(relationDirection(captor, spaceToWhichCaptorMoves.firstChild), captor).firstChild);
     removeBorder(captor.parentNode);
     removeMan(captor);
@@ -232,16 +232,6 @@ document.addEventListener('DOMContentLoaded', () => {
     element.firstChild.style.height = '90%';
     element.firstChild.style.width = '90%';
   }
-
-  function placesPieceCouldMoveToAfterCapture(piece) {
-    // console.log(piece);
-  }
-
-  // function makeMove() {
-  //   this.removeEventListener('click', makeMove);
-  //   addMan(document.querySelector(`#space${parseInt(this.id[3])-1}${parseInt(this.id[4])+1}`), this.style.backgroundColor);
-  //   removeMan(this);
-  // }
 
   function removeMan(man) {
     man.parentNode.removeChild(man.parentNode.firstChild);
@@ -279,6 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('non capture!');
     piecesThatCanMove = identifyPiecesThatCanMove();
     console.log(piecesThatCanMove);
+    for (i=0; i<piecesThatCanMove.length; i++) {
+      piecesThatCanMove[i].addEventListener('click', selectMover);
+    }
   }
 
   function identifyPiecesThatCanMove() {
@@ -323,6 +316,37 @@ document.addEventListener('DOMContentLoaded', () => {
     return tempPotentialSpaces;
   }
 
+  function selectMover() {
+    if (mover != null && mover != this) {
+      unselectMover();
+    }
+    mover = this;
+    mover.addEventListener('click', unselectMover);
+    spacesThatCanBeMovedTo = identifySpacesThatCanBeMovedTo(this);
+    addBorder(mover.parentNode);
+    makeMoveToable();
+  }
+
+  function unselectMover() {
+    mover.removeEventListener('click', unselectMover);
+    removeBorder(mover.parentNode);
+    mover.addEventListener('click', selectMover);
+    for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
+      spacesThatCanBeMovedTo[i].removeEventListener('click', makeMoveToable);
+    }
+    spacesThatCanBeMovedTo = [];
+    mover = null;
+  }
+
+  function makeMoveToable() {
+    for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
+      spacesThatCanBeMovedTo[i].addEventListener('click', movePiece);
+    }
+  }
+
+  function movePiece() {
+
+  }
 
 
 
