@@ -25,10 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
   piecesThatCanCapture = identifyPiecesThatCanCapture();
   piecesThatCanBeCaptured = [];
   captor = null;
-  // const movablePieces = identifyMovablePieces(currentPlayerPieces);
-  // identifyPiecesThatCanBeCapturedBy(document.querySelector('#man12'));
-  // identifyPiecesThatCanBeCapturedBy(document.querySelector('#man54'));
-  // identifyPiecesThatCanBeCapturedBy(document.querySelector('#man25'));
+
+  piecesThatCanMove = [];
 
   getReadyToSelect();
 
@@ -143,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // console.log(tempPotentialCaptees);
     return tempPotentialCaptees;
   }
 
@@ -156,17 +153,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getReadyToSelect() {
     console.log(piecesThatCanCapture);
-    for (i=0; i<piecesThatCanCapture.length; i++) {
-      piecesThatCanCapture[i].addEventListener('click', makeSelected);
+    if (piecesThatCanCapture.length > 0) {
+      for (i=0; i<piecesThatCanCapture.length; i++) {
+        piecesThatCanCapture[i].addEventListener('click', makeSelected);
+      }
+    } else {
+      enableNonCapturingMove();
     }
   }
 
   function makeSelected() {
-
-    // for (i=0; i<piecesThatCanCapture; i++) {
-    //   piecesThatCanCapture[i].removeEventListener('click', makeSelected);
-    // }
-    // piecesThatCanCapture = [];
     if (captor != null && captor != this) {
       makeUnselected();
     }
@@ -174,32 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     captor.addEventListener('click', makeUnselected);
     piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
     addBorder(captor.parentNode);
-
     makeCapturable();
-
-    // if (this.parentNode.classList.contains('selected')) {
-    //   this.parentNode.classList.remove('selected');
-    //   removeBorder(this.parentNode);
-    //   // piecesThatCanBeCaptured = [];
-    //   makeUncapturable();
-    // } else if (document.getElementsByClassName('selected').length > 0) {
-    //   removeBorder(document.querySelector('.selected'));
-    //   document.querySelector('.selected').classList.remove('selected');
-    //   this.parentNode.classList.add('selected');
-    //   addBorder(this.parentNode);
-    //   piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
-    //   makeCapturable();
-    // } else {
-    //   this.parentNode.classList.add('selected');
-    //   addBorder(this.parentNode);
-    //   piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
-    //   makeCapturable();
-    // }
-    // const placesCurrentlySelectedPieceCouldMoveTo = placesPieceCouldMoveToAfterCapture(piece);
-
-    // for (i=0; i<piecesThatCanCapture.length; i++) {
-    //   // piecesThatCanCapture[i].removeEventListener('click', makeSelected);
-    // }
   }
 
   function makeUnselected() {
@@ -239,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
     removeMan(spaceRelation(relationDirection(captor, spaceToWhichCaptorMoves.firstChild), captor).firstChild);
     removeBorder(captor.parentNode);
     removeMan(captor);
-    // this.style.backgroundColor = 'pink'
     switchPlayers();
   }
 
@@ -248,10 +218,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if ((parseInt(to.id[3]) < parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { return 'upright'; }
     if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) < parseInt(from.id[4]))) { return 'downleft'; }
     if ((parseInt(to.id[3]) > parseInt(from.id[3])) && (parseInt(to.id[4]) > parseInt(from.id[4]))) { return 'downright'; }
-    // if (relation == 'upleft') { return document.querySelector(`#space${parseInt(piece.id[3])-1}${parseInt(piece.id[4])-1}`); }
-    // if (relation == 'upright') { return document.querySelector(`#space${parseInt(piece.id[3])-1}${parseInt(piece.id[4])+1}`); }
-    // if (relation == 'downleft') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])-1}`); }
-    // if (relation == 'downright') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])+1}`); }
   }
 
 
@@ -271,12 +237,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // console.log(piece);
   }
 
-
-  function makeMove() {
-    this.removeEventListener('click', makeMove);
-    addMan(document.querySelector(`#space${parseInt(this.id[3])-1}${parseInt(this.id[4])+1}`), this.style.backgroundColor);
-    removeMan(this);
-  }
+  // function makeMove() {
+  //   this.removeEventListener('click', makeMove);
+  //   addMan(document.querySelector(`#space${parseInt(this.id[3])-1}${parseInt(this.id[4])+1}`), this.style.backgroundColor);
+  //   removeMan(this);
+  // }
 
   function removeMan(man) {
     man.parentNode.removeChild(man.parentNode.firstChild);
@@ -309,6 +274,56 @@ document.addEventListener('DOMContentLoaded', () => {
     captor = null;
     getReadyToSelect();
   }
+
+  function enableNonCapturingMove() {
+    console.log('non capture!');
+    piecesThatCanMove = identifyPiecesThatCanMove();
+    console.log(piecesThatCanMove);
+  }
+
+  function identifyPiecesThatCanMove() {
+    const tempPiecesThatCanMove = [];
+    for (j=0; j<currentPlayerPieces.length; j++) {
+      if (identifySpacesThatCanBeMovedTo(currentPlayerPieces[j]).length > 0) {
+        tempPiecesThatCanMove.push(currentPlayerPieces[j]);
+      }
+    }
+    return tempPiecesThatCanMove;
+  }
+
+  function identifySpacesThatCanBeMovedTo(piece) {
+    const tempPotentialSpaces = [];
+
+    if (piece.childNodes.length == 1 || players[0] == player1) {
+      if ((piece.id[3] > 0) && (piece.id[4] > 0)) {
+        if (spaceRelation('upleft', piece).firstChild == null) {
+          tempPotentialSpaces.push(spaceRelation('upleft', piece).firstChild);
+        }
+      }
+      if ((piece.id[3] > 0) && (piece.id[4] < n-1)) {
+        if (spaceRelation('upright', piece).firstChild == null) {
+          tempPotentialSpaces.push(spaceRelation('upright', piece).firstChild);
+        }
+      }
+    }
+
+    if (piece.childNodes.length == 1 || players[0] == player2) {
+      if ((piece.id[3] < n-1) && (piece.id[4] > 0)) {
+        if (spaceRelation('downleft', piece).firstChild == null) {
+          tempPotentialSpaces.push(spaceRelation('downleft', piece).firstChild);
+        }
+      }
+      if ((piece.id[3] < n-1) && (piece.id[4] < n-1)) {
+        if (spaceRelation('downright', piece).firstChild == null) {
+          tempPotentialSpaces.push(spaceRelation('downright', piece).firstChild);
+        }
+      }
+    }
+
+    return tempPotentialSpaces;
+  }
+
+
 
 
 })
