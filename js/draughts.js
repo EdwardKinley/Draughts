@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   player1 = { name: 'Player 1', colour: darkColour };
   player2 = { name: 'Player 2', colour: lightColour };
-  // players = [player1, player2];
-  players = [player2, player1];
+  players = [player1, player2];
+  // players = [player2, player1];
 
   addBoard();
 
@@ -213,8 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function makeCapturable() {
     // piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(potentialCaptor);
     for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-      // piecesThatCanBeCaptured[i].addEventListener('click', makePieceCapturable);
-      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).addEventListener('click', makePieceCapturable);
+      // piecesThatCanBeCaptured[i].addEventListener('click', capturePiece);
+      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).addEventListener('click', capturePiece);
     }
   }
 
@@ -222,13 +222,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // const potentialCaptor = document.querySelector('.selected').firstChild;
     // piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(potentialCaptor);
     for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-      // piecesThatCanBeCaptured[i].removeEventListener('click', makePieceCapturable);
-      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', makePieceCapturable);
+      // piecesThatCanBeCaptured[i].removeEventListener('click', capturePiece);
+      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
     }
     piecesThatCanBeCaptured = [];
   }
 
-  function makePieceCapturable() {
+  function capturePiece() {
     const colour = captor.style.backgroundColor;
     const spaceToWhichCaptorMoves = this;
     addMan(spaceToWhichCaptorMoves, colour);
@@ -236,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     removeBorder(captor.parentNode);
     removeMan(captor);
     // this.style.backgroundColor = 'pink'
+    switchPlayers();
   }
 
   function relationDirection(from, to) {
@@ -291,6 +292,16 @@ document.addEventListener('DOMContentLoaded', () => {
       ring.style.backgroundColor = darkColour;
       king.style.backgroundColor = lightColour;
     }
+  }
+
+  function switchPlayers() {
+    players.splice(0, 0, players.pop());
+    console.log(players);
+    currentPlayerPieces = identifyCurrentPlayerPieces();
+    piecesThatCanCapture = identifyPiecesThatCanCapture();
+    piecesThatCanBeCaptured = [];
+    captor = null;
+    getReadyToSelect();
   }
 
 
