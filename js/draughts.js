@@ -154,12 +154,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getReadyToSelect() {
-    console.log(piecesThatCanCapture);
+    currentPlayerPieces = identifyCurrentPlayerPieces();
+    piecesThatCanCapture = identifyPiecesThatCanCapture();
     if (piecesThatCanCapture.length > 0) {
+      console.log(players[0].colour, 'capture');
       for (i=0; i<piecesThatCanCapture.length; i++) {
         piecesThatCanCapture[i].addEventListener('click', makeSelected);
       }
     } else {
+      console.log(players[0].colour, 'non capture');
       enableNonCapturingMove();
     }
   }
@@ -192,19 +195,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function makeUncapturable() {
+  // function makeUncapturable() {
+  //   for (i=0; i<piecesThatCanBeCaptured.length; i++) {
+  //     spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
+  //   }
+  //   piecesThatCanBeCaptured = [];
+  // }
+
+  function capturePiece() {
+    // this.removeEventListener('click', capturePiece);
     for (i=0; i<piecesThatCanBeCaptured.length; i++) {
       spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
     }
-    piecesThatCanBeCaptured = [];
-  }
-
-  function capturePiece() {
-    this.removeEventListener('click', capturePiece);
     const colour = captor.style.backgroundColor;
     const spaceToWhichCaptorMoves = this;
     const isKing = captor.childNodes.length;
-    console.log(isKing);
     addMan(spaceToWhichCaptorMoves, colour);
     if (isKing == 1) { makeKing(spaceToWhichCaptorMoves.firstChild); }
     removeMan(spaceRelation(relationDirection(captor, spaceToWhichCaptorMoves.firstChild), captor).firstChild);
@@ -255,18 +260,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function switchPlayers() {
     players.splice(0, 0, players.pop());
-    currentPlayerPieces = identifyCurrentPlayerPieces();
     for (i=0; i<piecesThatCanCapture.length; i++) {
       piecesThatCanCapture[i].removeEventListener('click', makeSelected);
     }
     piecesThatCanCapture = identifyPiecesThatCanCapture();
     piecesThatCanBeCaptured = [];
     captor = null;
+
+    for (j=0; j<spacesThatCanBeMovedTo.length; j++) {
+      spacesThatCanBeMovedTo[j].removeEventListener('click', makeMoveToable);
+    }
+    piecesThatCanMove = [];
+    spacesThatCanBeMovedTo = [];
+    mover = null;
+    // currentPlayerPieces = identifyCurrentPlayerPieces();
     getReadyToSelect();
   }
 
   function enableNonCapturingMove() {
-    console.log('non capture!');
     piecesThatCanMove = identifyPiecesThatCanMove();
     for (i=0; i<piecesThatCanMove.length; i++) {
       piecesThatCanMove[i].addEventListener('click', selectMover);
@@ -338,14 +349,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function makeMoveToable() {
-    console.log(spacesThatCanBeMovedTo);
+    console.log('can move to', spacesThatCanBeMovedTo);
     for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
       spacesThatCanBeMovedTo[i].addEventListener('click', movePiece);
+      // spacesThatCanBeMovedTo[i].style.backgroundColor = 'green';
     }
   }
 
-  function movePiece() {
+  // function makeUnMoveToable() {
+  //   for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
+  //     spacesThatCanBeMovedTo[i].removeEventListener('click', movePiece);
+  //   }
+  //   spacesThatCanBeMovedTo = [];
+  // }
 
+  function movePiece() {
+    // console.log(mover);
+    // this.removeEventListener('click', movePiece);
+    const colour = mover.style.backgroundColor;
+    const isKing = mover.childNodes.length;
+    removeBorder(mover.parentNode);
+    removeMan(mover);
+    for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
+      spacesThatCanBeMovedTo[i].removeEventListener('click', movePiece);
+    }
+    for (j=0; j<piecesThatCanMove.length; j++) {
+      piecesThatCanMove[j].removeEventListener('click', selectMover);
+    }
+    const spaceToWhichPieceMoves = this;
+    addMan(spaceToWhichPieceMoves, colour);
+    if (isKing == 1 || ((players[0] == player1 && spaceToWhichPieceMoves.id[5] == 0) || (players[0] == player2 && spaceToWhichPieceMoves.id[5] == n-1))) { makeKing(spaceToWhichPieceMoves.firstChild); }
+    // removeMan(spaceRelation(relationDirection(mover, spaceToWhichPieceMoves.firstChild), mover).firstChild);
+    switchPlayers();
   }
 
 
