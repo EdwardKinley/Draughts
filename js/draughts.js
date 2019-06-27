@@ -21,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // addMan(document.querySelector('#space16'), darkColour);
   // makeKing(document.querySelector('#man16'));
 
-  currentPlayerPieces = identifyCurrentPlayerPieces();
+  currentPlayerPieces = [];
 
-  piecesThatCanCapture = identifyPiecesThatCanCapture();
+  piecesThatCanCapture = [];
   piecesThatCanBeCaptured = [];
   captor = null;
 
