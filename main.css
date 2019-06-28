@@ -25,10 +25,10 @@ body {
 }
 
 .scores {
-  height: 90vh;
+  height: 92vh;
   background-color: tan;
   color: saddlebrown;
-  padding: 1vh;
+  /* padding: 1vh; */
   text-align: center;
 }
 
@@ -77,4 +77,12 @@ body {
 
 .selected {
   /* border: 3px solid gold; */
+}
+
+.score {
+  padding: 0.7vh;
+}
+
+#player1, #player2 {
+  padding: 0.7vh;
 }

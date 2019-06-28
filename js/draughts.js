@@ -2,25 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   boardDiv = document.querySelector('.board');
   n = 8;
-  darkColour = 'black';
-  lightColour = 'white';
 
-  player1 = { id: 'player1', name: 'Player 1', colour: darkColour, score: 12 };
-  player2 = { id: 'player2', name: 'Player 2', colour: lightColour, score: 12 };
+  player1 = { id: 'player1', name: 'Player 1', colour: 'black', score: 12 };
+  player2 = { id: 'player2', name: 'Player 2', colour: 'white', score: 12 };
   players = [player1, player2];
-  // players = [player2, player1];
+
 
   addBoard();
   setUpScores();
-
-  // addMan(document.querySelector('#space41'), lightColour);
-  // addMan(document.querySelector('#space43'), lightColour);
-  // addMan(document.querySelector('#space36'), darkColour);
-  // makeKing(document.querySelector('#man52'));
-  // makeKing(document.querySelector('#man25'));
-  // removeMan(document.querySelector('#man16'))
-  // addMan(document.querySelector('#space16'), darkColour);
-  // makeKing(document.querySelector('#man16'));
 
   currentPlayerPieces = [];
 
@@ -64,9 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       space.style.backgroundColor = 'saddlebrown';
       if (space.id[5] < n/2 - 1) {
-        addMan(space, lightColour);
+        addMan(space, player2.colour);
       } else if (space.id[5] > n/2) {
-        addMan(space, darkColour);
+        addMan(space, player1.colour);
       }
     }
   }
@@ -80,10 +69,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setUpScores() {
-    document.querySelector('#player1Colour').style.color = player1.colour;
-    document.querySelector('#player1Score').style.color = player1.colour;
-    document.querySelector('#player2Colour').style.color = player2.colour;
-    document.querySelector('#player2Score').style.color = player2.colour;
+    document.querySelector('#player1').style.color = player1.colour;
+    document.querySelector('#player1Colour').textContent = `${player1.colour.charAt(0).toUpperCase()}${player1.colour.slice(1)}`;
+    document.querySelector('#player2').style.color = player2.colour;
+    document.querySelector('#player2Colour').textContent = `${player2.colour.charAt(0).toUpperCase()}${player2.colour.slice(1)}`;
+    addScoreBorder(player1);
+  }
+
+  function addScoreBorder(player) {
+    // document.querySelector(`#${player.id}`).style.border = '3px solid gold';
+    document.querySelector(`#${player.id}`).style.backgroundColor = 'saddlebrown';
+    document.querySelector(`#${player.id}Colour`).style.backgroundColor = 'tan';
+    document.querySelector(`#${player.id}Score`).style.backgroundColor = 'tan';
+  }
+
+  function removeScoreBorder(player) {
+    document.querySelector(`#${player.id}`).style.backgroundColor = 'tan';
   }
 
   function identifyCurrentPlayerPieces() {
@@ -102,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
     for (j=0; j<currentPlayerPieces.length; j++) {
       if (identifyPiecesThatCanBeCapturedBy(currentPlayerPieces[j]).length > 0) {
         tempPiecesThatCanCapture.push(currentPlayerPieces[j]);
-        // console.log(currentPlayerPieces[j].id, 'can capture');
       }
     }
     return tempPiecesThatCanCapture;
@@ -201,17 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return (identifyPiecesThatCanBeCapturedBy(captor).length > 0);
   }
 
-  // function potentialCaptorClicked() {
-  //   if (captor != null && captor != this) {
-  //     makeUnselected();
-  //   }
-  //   captor = this;
-  //   captor.addEventListener('click', makeUnselected);
-  //   piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
-  //   addBorder(captor.parentNode);
-  //   makeCapturable();
-  // }
-
   function potentialCaptorClicked() {
     if (captor == null) {
       captor = this;
@@ -246,31 +235,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // function makeUnselected() {
-  //   captor.removeEventListener('click', makeUnselected);
-  //   removeBorder(captor.parentNode);
-  //   captor.addEventListener('click', potentialCaptorClicked);
-  //   for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-  //     piecesThatCanBeCaptured[i].removeEventListener('click', makeCapturable);
-  //   }
-  //   piecesThatCanBeCaptured = [];
-  //   captor = null;
-  // }
-
-  // function makeUncapturable() {
-  //   for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-  //     spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
-  //   }
-  //   piecesThatCanBeCaptured = [];
-  // }
-
   function capturePiece() {
-    // this.removeEventListener('click', capturePiece);
-    // for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-    //   spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
-    // }
     makeUncapturable();
-    // captor.removeEventListener('click', potentialCaptorClicked);
     disableCapture();
     const colour = captor.style.backgroundColor;
     const spaceToWhichCaptorMoves = this;
@@ -282,10 +248,8 @@ document.addEventListener('DOMContentLoaded', () => {
     captor = spaceToWhichCaptorMoves.firstChild;
     currentPlayerPieces = identifyCurrentPlayerPieces();
     piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(captor);
-    // console.log(piecesThatCanBeCaptured);
     players[1].score --;
     updateScores(players[1]);
-    console.log(players[1].colour, players[1].score);
     if (canCaptureAgain()) {
       enableFurtherCapture();
     } else {
@@ -294,7 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateScores(player) {
-    console.log(player.id);
     document.querySelector(`#${player.id}Score`).textContent = player.score;
   }
 
@@ -339,27 +302,22 @@ document.addEventListener('DOMContentLoaded', () => {
     king.className = 'king';
     man.appendChild(ring);
     ring.appendChild(king);
-    if (man.style.backgroundColor == darkColour) {
-      ring.style.backgroundColor = lightColour;
-      king.style.backgroundColor = darkColour;
-    } else if (man.style.backgroundColor == lightColour) {
-      ring.style.backgroundColor = darkColour;
-      king.style.backgroundColor = lightColour;
+    if (man.style.backgroundColor == player1.colour) {
+      ring.style.backgroundColor = player2.colour;
+      king.style.backgroundColor = player1.colour;
+    } else if (man.style.backgroundColor == player2.colour) {
+      ring.style.backgroundColor = player1.colour;
+      king.style.backgroundColor = player2.colour;
     }
   }
 
   function switchPlayers() {
+    removeScoreBorder(players[0]);
     players.splice(0, 0, players.pop());
-    // for (i=0; i<piecesThatCanCapture.length; i++) {
-    //   piecesThatCanCapture[i].removeEventListener('click', potentialCaptorClicked);
-    // }
+    addScoreBorder(players[0]);
     piecesThatCanCapture = identifyPiecesThatCanCapture();
     piecesThatCanBeCaptured = [];
     captor = null;
-
-    // for (j=0; j<spacesThatCanBeMovedTo.length; j++) {
-    //   spacesThatCanBeMovedTo[j].removeEventListener('click', makeMoveToable);
-    // }
     piecesThatCanMove = [];
     spacesThatCanBeMovedTo = [];
     mover = null;
@@ -444,22 +402,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function makeMoveToable() {
     for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
-      // console.log('can move to', spacesThatCanBeMovedTo[i].id);
       spacesThatCanBeMovedTo[i].addEventListener('click', movePiece);
-      // spacesThatCanBeMovedTo[i].style.backgroundColor = 'green';
     }
   }
 
-  // function makeUnMoveToable() {
-  //   for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
-  //     spacesThatCanBeMovedTo[i].removeEventListener('click', movePiece);
-  //   }
-  //   spacesThatCanBeMovedTo = [];
-  // }
-
   function movePiece() {
-    // console.log(mover);
-    // this.removeEventListener('click', movePiece);
     const colour = mover.style.backgroundColor;
     const isKing = mover.childNodes.length;
     removeBorder(mover.parentNode);
@@ -472,9 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const spaceToWhichPieceMoves = this;
     addMan(spaceToWhichPieceMoves, colour);
-    // console.log('moves to', spaceToWhichPieceMoves.id);
     if (isKing == 1 || ((players[0] == player1 && spaceToWhichPieceMoves.id[5] == 0) || (players[0] == player2 && spaceToWhichPieceMoves.id[5] == n-1))) { makeKing(spaceToWhichPieceMoves.firstChild); }
-    // removeMan(spaceRelation(relationDirection(mover, spaceToWhichPieceMoves.firstChild), mover).firstChild);
     switchPlayers();
   }
 
@@ -482,7 +427,5 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('game over!');
     console.log(players[1].colour, 'wins');
   }
-
-
 
 })
