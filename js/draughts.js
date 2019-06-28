@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   spacesThatCanBeMovedTo = [];
   mover = null;
 
-  getReadyToSelect();
+  getReadyToMove();
 
   function addBoard() {
     for (i=0; i<n; i++) {
@@ -155,41 +155,75 @@ document.addEventListener('DOMContentLoaded', () => {
     if (relation == 'downright') { return document.querySelector(`#space${parseInt(piece.id[3])+1}${parseInt(piece.id[4])+1}`); }
   }
 
-  function getReadyToSelect() {
-    currentPlayerPieces = identifyCurrentPlayerPieces();
-    if (currentPlayerPieces.length == 0) { endGame(); }
-    piecesThatCanCapture = identifyPiecesThatCanCapture();
-    if (piecesThatCanCapture.length > 0) {
-      console.log(players[0].colour, 'capture');
-      for (i=0; i<piecesThatCanCapture.length; i++) {
-        piecesThatCanCapture[i].addEventListener('click', makeSelected);
-      }
+  function getReadyToMove() {
+    updateCurrentPlayerPieces();
+    updatePiecesThatCanCapture();
+    if (canCapture()) {
+      enableCapture();
     } else {
-      console.log(players[0].colour, 'non capture');
       enableNonCapturingMove();
     }
   }
 
-  function makeSelected() {
-    if (captor != null && captor != this) {
-      makeUnselected();
-    }
-    captor = this;
-    captor.addEventListener('click', makeUnselected);
-    piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
-    addBorder(captor.parentNode);
-    makeCapturable();
+  function updateCurrentPlayerPieces() {
+    currentPlayerPieces = identifyCurrentPlayerPieces();
   }
 
-  function makeUnselected() {
-    captor.removeEventListener('click', makeUnselected);
-    removeBorder(captor.parentNode);
-    captor.addEventListener('click', makeSelected);
-    for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-      piecesThatCanBeCaptured[i].removeEventListener('click', makeCapturable);
+  function updatePiecesThatCanCapture() {
+    piecesThatCanCapture = identifyPiecesThatCanCapture();
+  }
+
+  function canCapture() {
+    return (piecesThatCanCapture.length > 0);
+  }
+
+  function enableCapture() {
+    for (i=0; i<piecesThatCanCapture.length; i++) {
+      piecesThatCanCapture[i].addEventListener('click', potentialCaptorClicked);
     }
-    piecesThatCanBeCaptured = [];
-    captor = null;
+  }
+
+  function disableCapture() {
+    for (i=0; i<piecesThatCanCapture.length; i++) {
+      piecesThatCanCapture[i].removeEventListener('click', potentialCaptorClicked);
+    }
+  }
+
+  function canCaptureAgain() {
+    return (identifyPiecesThatCanBeCapturedBy(captor).length > 0);
+  }
+
+  // function potentialCaptorClicked() {
+  //   if (captor != null && captor != this) {
+  //     makeUnselected();
+  //   }
+  //   captor = this;
+  //   captor.addEventListener('click', makeUnselected);
+  //   piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(this);
+  //   addBorder(captor.parentNode);
+  //   makeCapturable();
+  // }
+
+  function potentialCaptorClicked() {
+    if (captor == null) {
+      captor = this;
+      addBorder(captor.parentNode);
+      piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(captor);
+      makeCapturable();
+    } else if (captor != null && captor != this) {
+      removeBorder(captor.parentNode);
+      makeUncapturable();
+      captor = this;
+      addBorder(captor.parentNode);
+      piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(captor);
+      makeCapturable();
+    } else if (captor == this) {
+      removeBorder(captor.parentNode);
+      makeUncapturable();
+      captor = null;
+      piecesThatCanBeCaptured = [];
+      enableCapture();
+    }
   }
 
   function makeCapturable() {
@@ -197,6 +231,23 @@ document.addEventListener('DOMContentLoaded', () => {
       spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).addEventListener('click', capturePiece);
     }
   }
+
+  function makeUncapturable() {
+    for (i=0; i<piecesThatCanBeCaptured.length; i++) {
+      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
+    }
+  }
+
+  // function makeUnselected() {
+  //   captor.removeEventListener('click', makeUnselected);
+  //   removeBorder(captor.parentNode);
+  //   captor.addEventListener('click', potentialCaptorClicked);
+  //   for (i=0; i<piecesThatCanBeCaptured.length; i++) {
+  //     piecesThatCanBeCaptured[i].removeEventListener('click', makeCapturable);
+  //   }
+  //   piecesThatCanBeCaptured = [];
+  //   captor = null;
+  // }
 
   // function makeUncapturable() {
   //   for (i=0; i<piecesThatCanBeCaptured.length; i++) {
@@ -207,19 +258,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function capturePiece() {
     // this.removeEventListener('click', capturePiece);
-    for (i=0; i<piecesThatCanBeCaptured.length; i++) {
-      spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
-    }
-    captor.removeEventListener('click', makeUnselected);
+    // for (i=0; i<piecesThatCanBeCaptured.length; i++) {
+    //   spaceRelation(relationDirection(captor, piecesThatCanBeCaptured[i]), piecesThatCanBeCaptured[i]).removeEventListener('click', capturePiece);
+    // }
+    makeUncapturable();
+    // captor.removeEventListener('click', potentialCaptorClicked);
+    disableCapture();
     const colour = captor.style.backgroundColor;
     const spaceToWhichCaptorMoves = this;
-    const isKing = captor.childNodes.length;
     addMan(spaceToWhichCaptorMoves, colour);
-    if (isKing == 1 || ((players[0] == player1 && spaceToWhichCaptorMoves.id[5] == 0) || (players[0] == player2 && spaceToWhichCaptorMoves.id[5] == n-1))) { makeKing(spaceToWhichCaptorMoves.firstChild); }
+    makeKingIfAppropriate(spaceToWhichCaptorMoves);
     removeMan(spaceRelation(relationDirection(captor, spaceToWhichCaptorMoves.firstChild), captor).firstChild);
     removeBorder(captor.parentNode);
     removeMan(captor);
-    switchPlayers();
+    captor = spaceToWhichCaptorMoves.firstChild;
+    currentPlayerPieces = identifyCurrentPlayerPieces();
+    piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(captor);
+    console.log(piecesThatCanBeCaptured);
+    if (canCaptureAgain()) {
+      enableFurtherCapture();
+    } else {
+      switchPlayers();
+    }
+  }
+
+  function enableFurtherCapture() {
+    addBorder(captor.parentNode);
+    makeCapturable();
+  }
+
+  function makeKingIfAppropriate(space) {
+    const isKing = captor.childNodes.length;
+    if (isKing == 1 || ((players[0] == player1 && space.id[5] == 0) || (players[0] == player2 && space.id[5] == n-1))) { makeKing(space.firstChild); }
   }
 
   function relationDirection(from, to) {
@@ -265,7 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function switchPlayers() {
     players.splice(0, 0, players.pop());
     for (i=0; i<piecesThatCanCapture.length; i++) {
-      piecesThatCanCapture[i].removeEventListener('click', makeSelected);
+      piecesThatCanCapture[i].removeEventListener('click', potentialCaptorClicked);
     }
     piecesThatCanCapture = identifyPiecesThatCanCapture();
     piecesThatCanBeCaptured = [];
@@ -277,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
     piecesThatCanMove = [];
     spacesThatCanBeMovedTo = [];
     mover = null;
-    getReadyToSelect();
+    getReadyToMove();
   }
 
   function enableNonCapturingMove() {
