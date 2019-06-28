@@ -70,10 +70,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setUpScores() {
     document.querySelector('#player1').style.color = player1.colour;
-    document.querySelector('#player1Colour').textContent = `${player1.colour.charAt(0).toUpperCase()}${player1.colour.slice(1)}`;
+    document.querySelector('#player1Colour').textContent = captitalizedPlayerColour(player1);
     document.querySelector('#player2').style.color = player2.colour;
-    document.querySelector('#player2Colour').textContent = `${player2.colour.charAt(0).toUpperCase()}${player2.colour.slice(1)}`;
+    document.querySelector('#player2Colour').textContent = captitalizedPlayerColour(player2);
     addScoreBorder(player1);
+  }
+
+  function captitalizedPlayerColour(player) {
+    return `${player.colour.charAt(0).toUpperCase()}${player.colour.slice(1)}`;
   }
 
   function addScoreBorder(player) {
@@ -167,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCurrentPlayerPieces();
     updatePiecesThatCanCapture();
     if (canCapture()) {
+      showHint();
       enableCapture();
     } else {
       enableNonCapturingMove();
@@ -183,6 +188,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function canCapture() {
     return (piecesThatCanCapture.length > 0);
+  }
+
+  function showHint() {
+    document.querySelector(`#hint`).textContent = `${captitalizedPlayerColour(players[0])} must capture`;
+    document.querySelector(`#hint`).style.color = players[0].colour;
+  }
+
+  function removeHint() {
+    document.querySelector(`#hint`).textContent = '';
   }
 
   function enableCapture() {
@@ -236,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function capturePiece() {
+    removeHint();
     makeUncapturable();
     disableCapture();
     const colour = captor.style.backgroundColor;
@@ -251,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     players[1].score --;
     updateScores(players[1]);
     if (canCaptureAgain()) {
+      showHint();
       enableFurtherCapture();
     } else {
       switchPlayers();
