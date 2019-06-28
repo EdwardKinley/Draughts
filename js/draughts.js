@@ -5,12 +5,13 @@ document.addEventListener('DOMContentLoaded', () => {
   darkColour = 'black';
   lightColour = 'white';
 
-  player1 = { name: 'Player 1', colour: darkColour };
-  player2 = { name: 'Player 2', colour: lightColour };
+  player1 = { id: 'player1', name: 'Player 1', colour: darkColour, score: 12 };
+  player2 = { id: 'player2', name: 'Player 2', colour: lightColour, score: 12 };
   players = [player1, player2];
   // players = [player2, player1];
 
   addBoard();
+  setUpScores();
 
   // addMan(document.querySelector('#space41'), lightColour);
   // addMan(document.querySelector('#space43'), lightColour);
@@ -78,6 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
     man.style.backgroundColor = colour;
   }
 
+  function setUpScores() {
+    document.querySelector('#player1Colour').style.color = player1.colour;
+    document.querySelector('#player1Score').style.color = player1.colour;
+    document.querySelector('#player2Colour').style.color = player2.colour;
+    document.querySelector('#player2Score').style.color = player2.colour;
+  }
+
   function identifyCurrentPlayerPieces() {
     const tempCurrentPlayerPieces = [];
     const men = document.querySelectorAll('.man');
@@ -94,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (j=0; j<currentPlayerPieces.length; j++) {
       if (identifyPiecesThatCanBeCapturedBy(currentPlayerPieces[j]).length > 0) {
         tempPiecesThatCanCapture.push(currentPlayerPieces[j]);
-        console.log(currentPlayerPieces[j].id, 'can capture');
+        // console.log(currentPlayerPieces[j].id, 'can capture');
       }
     }
     return tempPiecesThatCanCapture;
@@ -274,12 +282,20 @@ document.addEventListener('DOMContentLoaded', () => {
     captor = spaceToWhichCaptorMoves.firstChild;
     currentPlayerPieces = identifyCurrentPlayerPieces();
     piecesThatCanBeCaptured = identifyPiecesThatCanBeCapturedBy(captor);
-    console.log(piecesThatCanBeCaptured);
+    // console.log(piecesThatCanBeCaptured);
+    players[1].score --;
+    updateScores(players[1]);
+    console.log(players[1].colour, players[1].score);
     if (canCaptureAgain()) {
       enableFurtherCapture();
     } else {
       switchPlayers();
     }
+  }
+
+  function updateScores(player) {
+    console.log(player.id);
+    document.querySelector(`#${player.id}Score`).textContent = player.score;
   }
 
   function enableFurtherCapture() {
@@ -334,16 +350,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function switchPlayers() {
     players.splice(0, 0, players.pop());
-    for (i=0; i<piecesThatCanCapture.length; i++) {
-      piecesThatCanCapture[i].removeEventListener('click', potentialCaptorClicked);
-    }
+    // for (i=0; i<piecesThatCanCapture.length; i++) {
+    //   piecesThatCanCapture[i].removeEventListener('click', potentialCaptorClicked);
+    // }
     piecesThatCanCapture = identifyPiecesThatCanCapture();
     piecesThatCanBeCaptured = [];
     captor = null;
 
-    for (j=0; j<spacesThatCanBeMovedTo.length; j++) {
-      spacesThatCanBeMovedTo[j].removeEventListener('click', makeMoveToable);
-    }
+    // for (j=0; j<spacesThatCanBeMovedTo.length; j++) {
+    //   spacesThatCanBeMovedTo[j].removeEventListener('click', makeMoveToable);
+    // }
     piecesThatCanMove = [];
     spacesThatCanBeMovedTo = [];
     mover = null;
@@ -353,9 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function enableNonCapturingMove() {
     piecesThatCanMove = identifyPiecesThatCanMove();
     if (piecesThatCanMove.length == 0) { endGame(); }
-    for (i=0; i<piecesThatCanMove.length; i++) {
-      piecesThatCanMove[i].addEventListener('click', selectMover);
-    }
+    enableMoves();
   }
 
   function identifyPiecesThatCanMove() {
@@ -400,6 +414,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return tempPotentialSpaces;
   }
 
+  function enableMoves() {
+    for (i=0; i<piecesThatCanMove.length; i++) {
+      piecesThatCanMove[i].addEventListener('click', selectMover);
+    }
+  }
+
   function selectMover() {
     if (mover != null && mover != this) {
       unselectMover();
@@ -424,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function makeMoveToable() {
     for (i=0; i<spacesThatCanBeMovedTo.length; i++) {
-      console.log('can move to', spacesThatCanBeMovedTo[i].id);
+      // console.log('can move to', spacesThatCanBeMovedTo[i].id);
       spacesThatCanBeMovedTo[i].addEventListener('click', movePiece);
       // spacesThatCanBeMovedTo[i].style.backgroundColor = 'green';
     }
@@ -452,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const spaceToWhichPieceMoves = this;
     addMan(spaceToWhichPieceMoves, colour);
-    console.log('moves to', spaceToWhichPieceMoves.id);
+    // console.log('moves to', spaceToWhichPieceMoves.id);
     if (isKing == 1 || ((players[0] == player1 && spaceToWhichPieceMoves.id[5] == 0) || (players[0] == player2 && spaceToWhichPieceMoves.id[5] == n-1))) { makeKing(spaceToWhichPieceMoves.firstChild); }
     // removeMan(spaceRelation(relationDirection(mover, spaceToWhichPieceMoves.firstChild), mover).firstChild);
     switchPlayers();
