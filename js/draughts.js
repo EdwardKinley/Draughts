@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
   player2 = { id: 'player2', name: 'Player 2', colour: 'white', score: 12 };
   players = [player1, player2];
 
-
   addBoard();
   setUpScores();
   addButtons();
@@ -97,6 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const newGameButton = document.createElement('button');
     newGameButton.textContent = 'New game';
     buttonsSpace.appendChild(newGameButton);
+    newGameButton.addEventListener('click', () => {
+      document.querySelector('.board').innerHTML = '';
+      document.querySelector('.buttons').innerHTML = '';
+      addBoard();
+      setUpScores();
+      addButtons();
+      getReadyToMove();
+    })
     const resetButton = document.createElement('button');
     resetButton.textContent = 'Reset';
     buttonsSpace.appendChild(resetButton);
