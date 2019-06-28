@@ -26,10 +26,16 @@ body {
 
 .scores {
   height: 92vh;
+  min-width: 30vh;
   background-color: tan;
   color: saddlebrown;
   /* padding: 1vh; */
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 3vh;
 }
 
 .row {
@@ -81,19 +87,27 @@ body {
 
 .score {
   padding: 0.7vh;
+  width: 28.6vh;
+  /* display: flex;
+  flex-direction: column; */
 }
 
 #player1, #player2 {
   padding: 0.7vh;
 }
 
+#player1Colour, #player1Score, #player2Colour, #player2Score {
+  padding: 0.5vh;
+}
+
 .buttons {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
 }
 
 button {
-  font-size: 1rem;
+  font-size: 3vh;
   background-color: saddlebrown;
   color: tan;
   border: 0;
@@ -104,4 +118,18 @@ button {
 
 button:hover {
   transform: scale(1.05);
+}
+
+.score, .hint, .buttons {
+  /* height: 25vh; */
+}
+
+.hint {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#vs {
+  padding: 2vh;
 }

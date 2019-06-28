@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
   boardDiv = document.querySelector('.board');
   n = 8;
 
-  player1 = { id: 'player1', name: 'Player 1', colour: 'black', score: 12 };
-  player2 = { id: 'player2', name: 'Player 2', colour: 'white', score: 12 };
+  player1 = { id: 'player1', name: 'Black', colour: 'black', score: 12 };
+  player2 = { id: 'player2', name: 'White', colour: 'white', score: 12 };
   players = [player1, player2];
 
   addBoard();
@@ -70,15 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setUpScores() {
     document.querySelector('#player1').style.color = player1.colour;
-    document.querySelector('#player1Colour').textContent = captitalizedPlayerColour(player1);
+    // document.querySelector('#player1Colour').textContent = captitalizedPlayerColour(player1);
+    document.querySelector('#player1Colour').textContent = player1.name;
     document.querySelector('#player2').style.color = player2.colour;
-    document.querySelector('#player2Colour').textContent = captitalizedPlayerColour(player2);
+    // document.querySelector('#player2Colour').textContent = captitalizedPlayerColour(player2);
+    document.querySelector('#player2Colour').textContent = player2.name;
     addScoreBorder(player1);
   }
 
-  function captitalizedPlayerColour(player) {
-    return `${player.colour.charAt(0).toUpperCase()}${player.colour.slice(1)}`;
-  }
+  // function captitalizedPlayerColour(player) {
+  //   return `${player.colour.charAt(0).toUpperCase()}${player.colour.slice(1)}`;
+  // }
 
   function addScoreBorder(player) {
     // document.querySelector(`#${player.id}`).style.border = '3px solid gold';
@@ -93,12 +95,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addButtons() {
     const buttonsSpace = document.querySelector('.buttons');
+    const personalizeButton = document.createElement('button');
+    personalizeButton.textContent = 'Personalize';
+    buttonsSpace.appendChild(personalizeButton);
     const newGameButton = document.createElement('button');
     newGameButton.textContent = 'New game';
     buttonsSpace.appendChild(newGameButton);
     newGameButton.addEventListener('click', () => {
       document.querySelector('.board').innerHTML = '';
       document.querySelector('.buttons').innerHTML = '';
+      document.querySelector('#hint').textContent = '';
+      removeScoreBorder(player1);
+      removeScoreBorder(player2);
+      players = [player1, player2];
+      player1.score = 12;
+      player2.score = 12;
+      updateScores(player1);
+      updateScores(player2);
       addBoard();
       setUpScores();
       addButtons();
@@ -212,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showHint() {
-    document.querySelector(`#hint`).textContent = `${captitalizedPlayerColour(players[0])} must capture`;
+    document.querySelector(`#hint`).textContent = `${players[0].name} must capture`;
     document.querySelector(`#hint`).style.color = players[0].colour;
   }
 
