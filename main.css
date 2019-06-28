@@ -86,3 +86,22 @@ body {
 #player1, #player2 {
   padding: 0.7vh;
 }
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  font-size: 1rem;
+  background-color: saddlebrown;
+  color: tan;
+  border: 0;
+  margin: 1vh;
+  padding: 1vh;
+  transition: transform 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}

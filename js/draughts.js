@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   addBoard();
   setUpScores();
+  addButtons();
 
   currentPlayerPieces = [];
 
@@ -89,6 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function removeScoreBorder(player) {
     document.querySelector(`#${player.id}`).style.backgroundColor = 'tan';
+  }
+
+  function addButtons() {
+    const buttonsSpace = document.querySelector('.buttons');
+    const newGameButton = document.createElement('button');
+    newGameButton.textContent = 'New game';
+    buttonsSpace.appendChild(newGameButton);
+    const resetButton = document.createElement('button');
+    resetButton.textContent = 'Reset';
+    buttonsSpace.appendChild(resetButton);
+    resetButton.addEventListener('click', () => {
+      location.reload();
+    })
   }
 
   function identifyCurrentPlayerPieces() {
