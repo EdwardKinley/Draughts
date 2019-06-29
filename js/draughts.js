@@ -476,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function endGame() {
     console.log('game over!');
     console.log(players[1].colour, 'wins');
+    document.querySelector('#hint').textContent = `${players[1].name} wins!`;
   }
 
 })
