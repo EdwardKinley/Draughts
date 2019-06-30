@@ -109,11 +109,13 @@ document.addEventListener('DOMContentLoaded', () => {
       document.querySelector('#player1NameLabelSpace').textContent = `Name (${player1.name}):`;
       document.querySelector('#player1NameLabelSpace').style.color = player1.colour;
       const player1Input = document.createElement('input');
+      player1Input.value = player1.name;
       document.querySelector('#player1NameInputSpace').appendChild(player1Input);
       player1Input.focus();
       document.querySelector('#player2NameLabelSpace').textContent = `Name (${player2.name}):`;
       document.querySelector('#player2NameLabelSpace').style.color = player2.colour;
       const player2Input = document.createElement('input');
+      player2Input.value = player2.name;
       document.querySelector('#player2NameInputSpace').appendChild(player2Input);
       const okayButton = document.createElement('button');
       okayButton.textContent = 'Okay';
