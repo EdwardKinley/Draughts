@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   boardDiv = document.querySelector('.board');
+  buttonsSpace = document.querySelector('.buttons');
+
   n = 8;
 
   player1 = { id: 'player1', name: 'Black', colour: 'black', score: 12 };
@@ -94,10 +96,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addButtons() {
-    const buttonsSpace = document.querySelector('.buttons');
+    addPersonalizeButton();
+    addNewGameButton();
+    addResetButton();
+  }
+
+  function addPersonalizeButton() {
     const personalizeButton = document.createElement('button');
     personalizeButton.textContent = 'Personalize';
     buttonsSpace.appendChild(personalizeButton);
+    personalizeButton.addEventListener('click', () => {
+      document.querySelector('#player1NameLabelSpace').textContent = `Name (${player1.name}):`;
+      document.querySelector('#player1NameLabelSpace').style.color = player1.colour;
+      const player1Input = document.createElement('input');
+      document.querySelector('#player1NameInputSpace').appendChild(player1Input);
+      player1Input.focus();
+      document.querySelector('#player2NameLabelSpace').textContent = `Name (${player2.name}):`;
+      document.querySelector('#player2NameLabelSpace').style.color = player2.colour;
+      const player2Input = document.createElement('input');
+      document.querySelector('#player2NameInputSpace').appendChild(player2Input);
+      const okayButton = document.createElement('button');
+      okayButton.textContent = 'Okay';
+      document.querySelector('#playerNamesOkaySpace').appendChild(okayButton);
+      okayButton.addEventListener('click', () => {
+        player1.name = player1Input.value;
+        document.querySelector('#player1Colour').textContent = player1.name;
+        player2.name = player2Input.value;
+        document.querySelector('#player2Colour').textContent = player2.name;
+        document.querySelector('#player1NameLabelSpace').innerHTML = '';
+        document.querySelector('#player1NameInputSpace').innerHTML = '';
+        document.querySelector('#player2NameLabelSpace').innerHTML = '';
+        document.querySelector('#player2NameInputSpace').innerHTML = '';
+        document.querySelector('#playerNamesOkaySpace').innerHTML = '';
+        const hintText = document.querySelector('#hint').textContent;
+        if (hintText != '' && hintText[hintText.length-1] != '!') {
+          removeHint();
+          showHint();
+        }
+      })
+    })
+  }
+
+  function addNewGameButton() {
     const newGameButton = document.createElement('button');
     newGameButton.textContent = 'New game';
     buttonsSpace.appendChild(newGameButton);
@@ -117,6 +157,9 @@ document.addEventListener('DOMContentLoaded', () => {
       addButtons();
       getReadyToMove();
     })
+  }
+
+  function addResetButton() {
     const resetButton = document.createElement('button');
     resetButton.textContent = 'Reset';
     buttonsSpace.appendChild(resetButton);
@@ -474,8 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function endGame() {
-    console.log('game over!');
-    console.log(players[1].colour, 'wins');
     document.querySelector('#hint').textContent = `${players[1].name} wins!`;
   }
 
