@@ -10,8 +10,6 @@ body {
   align-items: center;
   height: 98vh;
   width: 99vw;
-  /* background-color: black; */
-  /* color: red; */
   font-family: sans-serif;
 }
 
@@ -19,9 +17,7 @@ body {
   height: 92vh;
   width: 92vh;
   min-width: 92vh;
-  /* margin: 5vh 10vw; */
   padding: 3vh;
-  /* background-color: grey; */
 }
 
 .scores {
@@ -29,7 +25,6 @@ body {
   min-width: 30vh;
   background-color: tan;
   color: saddlebrown;
-  /* padding: 1vh; */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -39,7 +34,6 @@ body {
 }
 
 .row {
-  /* background-color: yellow; */
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -55,10 +49,7 @@ body {
 .man {
   height: 90%;
   width: 90%;
-  /* border-bottom: 3px solid grey; */
-  /* border-right: 3px solid grey; */
   border-radius: 50%;
-  /* background-color: purple; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,7 +59,6 @@ body {
   height: 80%;
   width: 80%;
   border-radius: 50%;
-  /* background-color: white; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -78,18 +68,11 @@ body {
   height: 80%;
   width: 80%;
   border-radius: 50%;
-  /* background-color: black; */
-}
-
-.selected {
-  /* border: 3px solid gold; */
 }
 
 .score {
   padding: 0.7vh;
   width: 28.6vh;
-  /* display: flex;
-  flex-direction: column; */
 }
 
 #player1, #player2 {
@@ -122,10 +105,6 @@ button {
 
 button:hover {
   transform: scale(1.05);
-}
-
-.score, .hint, .buttons {
-  /* height: 25vh; */
 }
 
 .hint {

@@ -72,20 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function setUpScores() {
     document.querySelector('#player1').style.color = player1.colour;
-    // document.querySelector('#player1Colour').textContent = captitalizedPlayerColour(player1);
     document.querySelector('#player1Colour').textContent = player1.name;
     document.querySelector('#player2').style.color = player2.colour;
-    // document.querySelector('#player2Colour').textContent = captitalizedPlayerColour(player2);
     document.querySelector('#player2Colour').textContent = player2.name;
     addScoreBorder(player1);
   }
 
-  // function captitalizedPlayerColour(player) {
-  //   return `${player.colour.charAt(0).toUpperCase()}${player.colour.slice(1)}`;
-  // }
-
   function addScoreBorder(player) {
-    // document.querySelector(`#${player.id}`).style.border = '3px solid gold';
     document.querySelector(`#${player.id}`).style.backgroundColor = 'saddlebrown';
     document.querySelector(`#${player.id}Colour`).style.backgroundColor = 'tan';
     document.querySelector(`#${player.id}Score`).style.backgroundColor = 'tan';
