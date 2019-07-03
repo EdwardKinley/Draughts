@@ -513,6 +513,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function endGame() {
     document.querySelector('#hint').textContent = `${players[1].name} wins!`;
+    document.querySelector('#player1').style.backgroundColor = 'tan';
+    document.querySelector('#player2').style.backgroundColor = 'tan';
   }
 
 })
